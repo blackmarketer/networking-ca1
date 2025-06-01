@@ -45,7 +45,7 @@ jobs:
       
       - name: Copy Docker file to EC2
         run: |
-          sleep 30
+          sleep 60
           chmod 600 ca1-key.pem
           scp -o StrictHostKeyChecking=no -i ca1-key.pem webapp/* ubuntu@${{ env.EC2_IP }}:/home/ubuntu/
       
