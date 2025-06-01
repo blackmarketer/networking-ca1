@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project automates the deployment of a web application using Terraform for infrastructure provisioning and GitHub Actions for continuous integration and deployment.
+This project automates the deployment of a web application using Terraform for infrastructure provisioning and GitHub Actions for CI/CD.
 
 ## Project Structure
 
