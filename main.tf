@@ -90,7 +90,6 @@ user_data = <<-EOF
             apt update -y
             apt install docker.io -y 
 
-            sudo docker run -d --restart unless-stopped --name nginx-web -p 80:80 nginx
             EOF
 
   tags = {
