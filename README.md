@@ -3,14 +3,15 @@
 
 ## Overview
 
-This project automates the deployment of a web application using Terraform for infrastructure provisioning and GitHub Actions for CI/CD.
+This project automates the deployment of a containerized web application using Terraform for provisioning cloud infrastructure, Ansible for configuration management, and Docker for containerization. Continuous Integration and Continuous Deployment (CI/CD) is managed through GitHub Actions, providing a streamlined, repeatable, and automated workflow from code commit to production deployment.
 
 ## Project Structure
 
-- `.github/workflows/` – Contains GitHub Actions workflow files for automation.
-- `webapp/` – Directory for the web application's source code.
-- `main.tf` – Terraform configuration file defining the infrastructure resources.
-- `backend.tf` – Terraform backend configuration for state management.
+- `.github/workflows/` – Contains GitHub Actions workflow files for automation.  
+- `ansible/` – Ansible playbook for configuration management and application deployment.  
+- `webapp/` – Directory for the web application's source code and Docker container file.  
+- `main.tf` – Terraform configuration file defining the infrastructure resources.  
+- `backend.tf` – Terraform backend configuration for state management.  
 
 ## Automation Flow
 
@@ -22,13 +23,14 @@ This project automates the deployment of a web application using Terraform for i
    - `backend.tf` configures the backend for storing Terraform state securely.
    - Terraform commands (`init`, `plan`, `apply`) are used to provision resources.
 
-3. **CI/CD with GitHub Actions**
-   - Workflows in `.github/workflows/` automate testing and deployment processes.
-   - On code push, the workflow:
-     - Checks out the repository code.
-     - Sets up the necessary environment.
-     - Runs tests on the web application.
-     - Deploys the application to the provisioned infrastructure.
+3. **Configuration Management with Ansible**  
+   Ansible playbooks in the `ansible/` directory are used to configure servers and deploy the web application.
+
+4. **Containerization with Docker**  
+   The web application is containerized using Docker. The `Dockerfile` specifies the build instructions, and containers are managed as part of the deployment process.
+
+5. **Continuous Integration and Deployment with GitHub Actions**  
+   Workflows automate testing, provisioning, and deployment to ensure a seamless CI/CD pipeline.
 
 ## Notes
 
