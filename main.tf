@@ -77,13 +77,6 @@ resource "aws_instance" "web" {
   key_name               = aws_key_pair.generated_key.key_name
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
-user_data = <<-EOF
-            #!/bin/bash
-            apt update -y
-            apt install docker.io -y 
-
-            EOF
-
   tags = {
     Name = "WebServer"
   }

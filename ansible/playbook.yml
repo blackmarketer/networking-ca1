@@ -12,14 +12,13 @@
         name: "{{ item }}"
         state: present
       loop:
-        - apt-transport-https
-        - curl
-        - gnupg
-        - ca-certificates
-        - lsb-release
+          - ca-certificates
+          - curl
+          - gnupg
+          - python3-pip
 
-    - name: Install Docker using the official convenience script
-      shell: curl -fsSL https://get.docker.com | sh
+    - name: Install Docker
+      shell: apt install docker.io -y 
       become: true
 
     - name: Ensure Docker service is started and enabled
