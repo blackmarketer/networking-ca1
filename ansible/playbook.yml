@@ -61,6 +61,8 @@
       command: sudo docker build -t webapp /home/ubuntu/webapp
       args:
         chdir: /home/ubuntu/webapp
+        become: true
 
     - name: Run Docker container
       command: sudo docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
+      become: true
