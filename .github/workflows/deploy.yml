@@ -45,7 +45,7 @@ jobs:
         id: ec2ip
         run: |
           echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
-          sleep 60
+          sleep 30 # Wait for EC2 to be ready
 
       - name: Run Ansible Playbook
         run: |
