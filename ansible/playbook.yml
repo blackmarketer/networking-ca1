@@ -7,33 +7,21 @@
       apt:
         update_cache: yes
 
-    - name: Install required packages for Docker
+    - name: Install dependencies
       apt:
         name: "{{ item }}"
         state: present
       loop:
-        - apt-transport-https
-        - ca-certificates
         - curl
-        - software-properties-common
         - gnupg
+        - ca-certificates
+        - lsb-release
+        - apt-transport-https
 
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add Docker APT repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable
-        state: present
-        filename: docker
-
-    - name: Install Docker Engine
-      apt:
-        name: docker-ce
-        state: latest
-        update_cache: true
+    - name: Install Docker using the official convenience script
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        warn: false
 
     - name: Ensure Docker service is started and enabled
       service:
@@ -49,7 +37,7 @@
         group: ubuntu
         mode: '0755'
 
-    - name: Copy application files
+    - name: Copy application files to EC2
       copy:
         src: ../webapp/
         dest: /home/ubuntu/webapp/
@@ -58,11 +46,9 @@
         mode: '0644'
 
     - name: Build Docker image
-      command: sudo docker build -t webapp /home/ubuntu/webapp
+      command: docker build -t webapp /home/ubuntu/webapp
       args:
         chdir: /home/ubuntu/webapp
-      become: true
 
     - name: Run Docker container
-      command: sudo docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
-      become: true
+      command: docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
