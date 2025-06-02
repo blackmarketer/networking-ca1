@@ -1,54 +1,66 @@
----
 - name: Deploy Docker App to EC2 Ubuntu
   hosts: all
   become: true
-  vars:
-    app_src_dir: ./webapp
-    remote_app_dir: /home/ubuntu/webapp
-    docker_image_name: webapp
-    docker_container_name: webapp
-    docker_port_map: "80:80"
 
   tasks:
-    - name: Install Docker
+    - name: Update APT cache
       apt:
-        name: docker.io
+        update_cache: yes
+
+    - name: Install required packages for Docker
+      apt:
+        name: "{{ item }}"
         state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - gnupg
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+        filename: docker
+
+    - name: Install Docker Engine
+      apt:
+        name: docker-ce
+        state: latest
         update_cache: true
 
-    - name: Ensure Docker service is running
+    - name: Ensure Docker service is started and enabled
       service:
         name: docker
         state: started
         enabled: true
 
-    - name: Create app directory on EC2
+    - name: Create app directory
       file:
-        path: "{{ remote_app_dir }}"
+        path: /home/ubuntu/webapp
         state: directory
-        mode: '0755'
-        owner: ubuntu
-
-    - name: Copy app files to EC2
-      copy:
-        src: "{{ app_src_dir }}/"
-        dest: "{{ remote_app_dir }}/"
-        mode: '0644'
         owner: ubuntu
         group: ubuntu
+        mode: '0755'
+
+    - name: Copy application files
+      copy:
+        src: ../webapp/
+        dest: /home/ubuntu/webapp/
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
 
     - name: Build Docker image
-      community.docker.docker_image:
-        name: "{{ docker_image_name }}"
-        source: build
-        build:
-          path: "{{ remote_app_dir }}"
+      command: docker build -t webapp /home/ubuntu/webapp
+      args:
+        chdir: /home/ubuntu/webapp
 
-    - name: Ensure Docker container is running
-      community.docker.docker_container:
-        name: "{{ docker_container_name }}"
-        image: "{{ docker_image_name }}"
-        state: started
-        restart_policy: unless-stopped
-        ports:
-          - "{{ docker_port_map }}"
+    - name: Run Docker container
+      command: docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
