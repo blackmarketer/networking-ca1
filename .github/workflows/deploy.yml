@@ -44,16 +44,8 @@ jobs:
       - name: EC2 IP from Terraform Output
         id: ec2ip
         run: echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
-      
-      - name: Copy Docker file to EC2
+
+      - name: Run Ansible Playbook
         run: |
-          sleep 60
-          chmod 600 ca1-key.pem
-          scp -o StrictHostKeyChecking=no -i ca1-key.pem webapp/* ubuntu@${{ env.EC2_IP }}:/home/ubuntu/
-      
-      - name: SSH & Deploy Docker App
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ca1-key.pem ubuntu@${{ env.EC2_IP }} << 'EOF'
-            sudo docker build -t webapp /home/ubuntu
-            sudo docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
-          EOF
+          ansible-playbook -i "ec2 ansible_host=${{ env.EC2_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=ca1-key.pem," playbook.yml \
+           -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"'

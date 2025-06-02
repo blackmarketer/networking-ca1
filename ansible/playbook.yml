@@ -1,0 +1,54 @@
+---
+- name: Deploy Docker App to EC2 Ubuntu
+  hosts: docker-hosts
+  become: true
+  vars:
+    app_src_dir: ./webapp
+    remote_app_dir: /home/ubuntu/webapp
+    docker_image_name: webapp
+    docker_container_name: webapp
+    docker_port_map: "80:80"
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create app directory on EC2
+      file:
+        path: "{{ remote_app_dir }}"
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+
+    - name: Copy app files to EC2
+      copy:
+        src: "{{ app_src_dir }}/"
+        dest: "{{ remote_app_dir }}/"
+        mode: '0644'
+        owner: ubuntu
+        group: ubuntu
+
+    - name: Build Docker image
+      community.docker.docker_image:
+        name: "{{ docker_image_name }}"
+        source: build
+        build:
+          path: "{{ remote_app_dir }}"
+
+    - name: Ensure Docker container is running
+      community.docker.docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ docker_image_name }}"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ docker_port_map }}"
