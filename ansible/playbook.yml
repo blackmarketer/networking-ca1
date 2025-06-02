@@ -1,6 +1,6 @@
 ---
 - name: Deploy Docker App to EC2 Ubuntu
-  hosts: docker-hosts
+  hosts: ec2
   become: true
   vars:
     app_src_dir: ./webapp
