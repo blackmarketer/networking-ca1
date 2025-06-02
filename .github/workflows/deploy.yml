@@ -47,6 +47,6 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -i "${{ env.EC2_IP }}," ansible/playbook.yml \
-            -u ubuntu --private-key ca1-key.pem \
+          ansible-playbook -i "${{ env.EC2_IP }}," ansible/playbook.yml -u "ubuntu" \
+            --private-key ca1-key.pem \
             -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"'
