@@ -36,7 +36,7 @@ data "aws_subnet" "default" {
 
   availability_zone = "us-east-1a"
 }
-
+# demo commit
 resource "aws_security_group" "web_sg" {
   name        = "web-server-sg"
   description = "Allow SSH, HTTP, and HTTPS"
