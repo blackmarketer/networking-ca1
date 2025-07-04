@@ -1,9 +1,6 @@
 
 # Networking CA1 – Automated Container deployment and Administration in the cloud
 
-## Overview
-
-This project automates the deployment of a containerized web application using Terraform for provisioning cloud infrastructure, Ansible for configuration management, and Docker for containerization. Continuous Integration and Continuous Deployment (CI/CD) is managed through GitHub Actions, providing a streamlined, repeatable, and automated workflow from code commit to production deployment.
 
 ## Project Structure
 
